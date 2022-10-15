@@ -1,0 +1,29 @@
+database:
+  uri: mongodb://admin:password@localhost:27017
+dashboards:
+  - name: Dashboard 1
+    projects:
+      - name: Project 1
+        apps:
+          - current:
+              data:
+                title: Current Version
+                description: This is a description
+              datasource:
+                resourceConfig: 
+                  kind: jenkins
+                  spec:
+                    release: weekly
+            expected:
+              data:
+                title: Current Version
+                description: This is a description
+              datasource:
+                resourceConfig: 
+                  kind: jenkins
+                  spec:
+                    release: weekly
+                resourceConfig: 
+                  kind: jenkins
+                  spec:
+                    release: weekly
