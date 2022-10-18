@@ -18,8 +18,8 @@ var (
 	// Verbose allows to enable/disable debug logging
 	verbose bool
 	rootCmd = &cobra.Command{
-		Use:   "updateserver",
-		Short: "updateserver is the server alternative to Updatecli",
+		Use:   "updatefactory",
+		Short: "updatefactory is the server alternative to Updatecli",
 		Long:  `A long running Updatecli pipeline`,
 		Run: func(cmd *cobra.Command, args []string) {
 
@@ -34,10 +34,7 @@ var (
 				Options: o,
 			}
 
-			if err := e.Start(); err != nil {
-				logrus.Errorln(err)
-				os.Exit(1)
-			}
+			e.Start()
 		},
 		PostRun: func(cmd *cobra.Command, args []string) {
 			logrus.Infoln("See you next time")
@@ -75,11 +72,11 @@ func initConfig() {
 		viper.SetConfigName(cfgFile)
 	}
 
-	viper.SetConfigType("yaml")                // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath("/etc/updateserver/")  // path to look for the config file in
-	viper.AddConfigPath("$HOME/.updateserver") // call multiple times to add many search paths
-	viper.AddConfigPath(".")                   // optionally look for config in the working directory
-	viper.ReadInConfig()                       // Find and read the config file
+	viper.SetConfigType("yaml")                 // REQUIRED if the config file does not have the extension in the name
+	viper.AddConfigPath("/etc/updatefactory/")  // path to look for the config file in
+	viper.AddConfigPath("$HOME/.updatefactory") // call multiple times to add many search paths
+	viper.AddConfigPath(".")                    // optionally look for config in the working directory
+	viper.ReadInConfig()                        // Find and read the config file
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		logrus.Infof("Config file changed:", e.Name)

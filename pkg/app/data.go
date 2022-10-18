@@ -59,3 +59,8 @@ func (d *Data) Run() error {
 
 	return nil
 }
+
+func (d Data) IsZero() bool {
+	var zero Data
+	return d == zero
+}

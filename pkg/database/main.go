@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -30,13 +31,16 @@ func Connect(o Options) error {
 		return err
 	}
 
-	err = Client.Ping(context.TODO(), nil)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	err = Client.Ping(ctx, nil)
+	defer cancel()
+
 	if err != nil {
 		logrus.Errorf("database ping test failed: %s", err)
 		return err
 	}
 
-	logrus.Infof("database connected")
+	logrus.Infoln("database connected")
 
 	return nil
 }

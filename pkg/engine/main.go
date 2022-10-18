@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/updatecli/updateserver/pkg/app"
+	"github.com/updatecli/updateserver/pkg/api"
 	"github.com/updatecli/updateserver/pkg/dashboard"
 	"github.com/updatecli/updateserver/pkg/database"
 )
@@ -25,58 +25,59 @@ type Engine struct {
 	Options Options
 }
 
-func (e *Engine) Start() error {
+func (e *Engine) StartServer() {
+	api.Run()
+}
 
+func (e *Engine) StartRunner() {
 	var dashboards []dashboard.Dashboard
 	var err error
 
 	if err := database.Connect(e.Options.Database); err != nil {
 		logrus.Errorln(err)
-		return err
+		os.Exit(1)
 	}
 
 	if len(e.Options.Dashboards) > 0 {
-		dashboards = append(dashboards, e.Options.Dashboards...)
+		for i := range e.Options.Dashboards {
+			d := e.Options.Dashboards[i]
+			d.Init()
+			err := d.Save()
+			if err != nil {
+				logrus.Errorln(err)
+			}
+		}
 	}
 
 	for {
+		// Load all dashboard to update them
+		if dashboards, err = dashboard.SearchAll(); err != nil {
+			logrus.Println(err)
+			continue
+		}
+
+		// Update Dashboard
 		for _, dashboard := range dashboards {
+
 			if err := dashboard.Run(); err != nil {
 				logrus.Errorln(err)
 				continue
 			}
-		}
-
-		if dashboards, err = dashboard.Search(); err != nil {
-			logrus.Println(err)
-			os.Exit(1)
-		}
-
-		var apps []app.App
-		apps, err = app.SearchApps()
-		if err != nil {
-			break
-		}
-
-		for {
-
-			for i := range apps {
-				apps[i].Run()
-			}
-			apps, err = app.SearchApps()
-			if err != nil {
+			if err := dashboard.Save(); err != nil {
 				logrus.Errorln(err)
-				break
+				continue
 			}
-
-			logrus.Infof("work done, doing a 10 secondes break")
-			time.Sleep(10 * time.Second)
-
 		}
 
 		logrus.Infof("work done, doing a 10 secondes break")
 		time.Sleep(10 * time.Second)
 
 	}
-	return nil
+
+}
+
+func (e *Engine) Start() {
+	go e.StartRunner()
+	e.StartServer()
+
 }
