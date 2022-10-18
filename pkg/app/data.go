@@ -5,6 +5,7 @@ import (
 	"time"
 
 	updatecliSource "github.com/updatecli/updatecli/pkg/core/pipeline/source"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -13,38 +14,46 @@ const (
 )
 
 type Data struct {
-	Data       Spec                   `json:"data,omitempty"`
-	DataSource updatecliSource.Config `json:"datasource,omitempty"`
+	Data       Spec   `json:"data,omitempty" bson:"data,omitempty"`
+	DataSource string `json:"datasource,omitempty" bson:"datasource,omitempty"`
 }
 
 func (d *Data) Run() error {
+
 	currentTime := time.Now().UTC()
 
-	if len(d.Data.CreateAt) == 0 {
-		d.Data.CreateAt = currentTime.String()
+	if d.Data.CreatedAt.IsZero() {
+		d.Data.CreatedAt = currentTime
+		d.Data.UpdatedAt = currentTime
 	}
 
-	if err := d.DataSource.Validate(); err != nil {
+	sourceSpec := updatecliSource.Config{}
+	if err := yaml.Unmarshal([]byte(d.DataSource), &sourceSpec); err != nil {
+		return err
+	}
+
+	if err := sourceSpec.Validate(); err != nil {
 		return err
 	}
 
 	source := updatecliSource.Source{
-		Config: d.DataSource,
+		Config: sourceSpec,
 	}
 
-	// ToDO: To retrieve source data from source Database and only updating
-	// if newer than 1min
+	// Disable for testing
+	//if d.Data.UpdatedAt.After(currentTime.Add(-10 * time.Minute)) {
+	//	logrus.Infof("Data already updated within the latest 10 minutes")
+	//	return nil
+	//}
 
 	if err := source.Run(); err != nil {
 		d.Data.Version = ErrData
-		d.Data.UpdatedAt = currentTime.String()
+		d.Data.UpdatedAt = currentTime
 		return fmt.Errorf("failed execute source: %s", err)
 	}
 
-	fmt.Printf("\n\n")
-
 	if d.Data.Version != source.Output {
-		d.Data.UpdatedAt = currentTime.String()
+		d.Data.UpdatedAt = currentTime
 		d.Data.Version = source.Output
 	}
 

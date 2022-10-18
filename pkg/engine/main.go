@@ -2,9 +2,11 @@ package engine
 
 import (
 	"errors"
+	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/updatecli/updateserver/pkg/app"
 	"github.com/updatecli/updateserver/pkg/dashboard"
 	"github.com/updatecli/updateserver/pkg/database"
 )
@@ -26,6 +28,7 @@ type Engine struct {
 func (e *Engine) Start() error {
 
 	var dashboards []dashboard.Dashboard
+	var err error
 
 	if err := database.Connect(e.Options.Database); err != nil {
 		logrus.Errorln(err)
@@ -44,10 +47,36 @@ func (e *Engine) Start() error {
 			}
 		}
 
-		//
+		if dashboards, err = dashboard.Search(); err != nil {
+			logrus.Println(err)
+			os.Exit(1)
+		}
 
-		logrus.Infof("work done, doing a 5 minutes break")
-		time.Sleep(5 * time.Minute)
+		var apps []app.App
+		apps, err = app.SearchApps()
+		if err != nil {
+			break
+		}
+
+		for {
+
+			for i := range apps {
+				apps[i].Run()
+			}
+			apps, err = app.SearchApps()
+			if err != nil {
+				logrus.Errorln(err)
+				break
+			}
+
+			logrus.Infof("work done, doing a 10 secondes break")
+			time.Sleep(10 * time.Second)
+
+		}
+
+		logrus.Infof("work done, doing a 10 secondes break")
+		time.Sleep(10 * time.Second)
 
 	}
+	return nil
 }

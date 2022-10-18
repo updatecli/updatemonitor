@@ -5,25 +5,22 @@ dashboards:
     projects:
       - name: Project 1
         apps:
-          - current:
+          - name: "Example App Name"
+            description: "This is an example app description"
+            current:
               data:
-                title: Current Version
-                description: This is a description
-              datasource:
-                resourceConfig: 
-                  kind: jenkins
-                  spec:
-                    release: weekly
+                name: Current Version
+                description: This is the current data description
+              datasource: |
+                kind: jenkins
+                spec:
+                  release: weekly
             expected:
               data:
-                title: Current Version
-                description: This is a description
-              datasource:
-                resourceConfig: 
-                  kind: jenkins
-                  spec:
-                    release: weekly
-                resourceConfig: 
-                  kind: jenkins
-                  spec:
-                    release: weekly
+                name: Expected Version
+                description: This is the expected description
+              datasource: |
+                kind: jenkins
+                spec:
+                  release: weekly
+

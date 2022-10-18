@@ -1,10 +1,15 @@
 package dashboard
 
 import (
+	"context"
 	"errors"
+	"log"
 
 	"github.com/sirupsen/logrus"
 	"github.com/updatecli/updateserver/pkg/app"
+	"github.com/updatecli/updateserver/pkg/database"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
@@ -12,57 +17,75 @@ var (
 )
 
 type Project struct {
-	Name string
-	Apps []app.App
+	ID   primitive.ObjectID `json:"_id,omitempty" bjson:"_id,omitempty"`
+	Name string             `json:"name,omitempty" bjson:"name,omitempty"`
+	Apps []app.App          `json:"apps,omitempty" bjson:"apps,omitempty"`
 }
 
 type Dashboard struct {
-	Name     string
-	Projects []Project
+	ID       primitive.ObjectID `json:"_id,omitempty" bjson:"_id,omitempty"`
+	Name     string             `json:"name,omitempty" bjson:"name,omitempty"`
+	Projects []Project          `json:"projects,omitempty" bjson:"projects,omitempty"`
 }
 
 // loadDashboard query a database to retrieve projects
-func (d *Dashboard) loadDashboard() error {
-	return nil
+func Search() ([]Dashboard, error) {
+
+	collection := database.Client.Database(app.DatabaseName).Collection(app.DatabaseCollection)
+
+	var dashboards []Dashboard
+	//var searchLimit int64 = 10
+
+	//filter := bson.D{{Key: "id", Value: "xxx"}}
+	//findOptions := options.FindOptions{
+	//	Limit: &searchLimit,
+	//}
+
+	//if err := collection.Find(context.TODO(), filter, findOptions).Decode(&apps); err != nil {
+	//	return err
+	//}
+	cursor, err := collection.Find(context.TODO(), bson.M{})
+
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := context.TODO()
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		var dashboard Dashboard
+		if err = cursor.Decode(&dashboard); err != nil {
+			log.Fatal(err)
+			break
+		}
+
+		//var emptyDashboard Dashboard
+
+		//if dashboard == emptyDashboard {
+		//	return nil, nil
+		//}
+
+		dashboards = append(dashboards, dashboard)
+	}
+
+	return dashboards, nil
 }
 
-// saveDashboard insert result in the database
-func (d *Dashboard) saveDashboard() error {
-	return nil
-}
-
-func (d *Dashboard) updateDashboard() error {
-	errs := []error{}
+func (d *Dashboard) Run() error {
 
 	for _, project := range d.Projects {
 		for _, app := range project.Apps {
 			if err := app.Run(); err != nil {
-				errs = append(errs, err)
+				logrus.Errorln(err)
+				continue
+			}
+
+			if err := app.Save(); err != nil {
+				logrus.Errorln(err)
 				continue
 			}
 		}
 	}
 
-	for _, err := range errs {
-		logrus.Errorln(err)
-		return ErrFailedUpdatingDashboard
-	}
-
-	return nil
-}
-
-func (d *Dashboard) Run() error {
-
-	if err := d.loadDashboard(); err != nil {
-		return err
-	}
-
-	if err := d.updateDashboard(); err != nil {
-		return err
-	}
-
-	if err := d.saveDashboard(); err != nil {
-		return err
-	}
 	return nil
 }
