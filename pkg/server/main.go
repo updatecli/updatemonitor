@@ -3,8 +3,10 @@ package server
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/updatecli/updateserver/pkg/dashboard"
 )
 
@@ -125,5 +127,9 @@ func Run() {
 	r.PUT("/dashboards/:id", Update)
 	r.DELETE("/dashboards/:id", Delete)
 
-	r.Run() // listen and serve on 0.0.0.0:8080
+	// listen and server on 0.0.0.0:8080
+	if err := r.Run(); err != nil {
+		logrus.Errorln(err)
+		os.Exit(1)
+	}
 }

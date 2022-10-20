@@ -61,7 +61,10 @@ func init() {
 		}
 	}
 
-	viper.BindPFlag("debug", rootCmd.Flags().Lookup("debug"))
+	if err := viper.BindPFlag("debug", rootCmd.Flags().Lookup("debug")); err != nil {
+		logrus.Errorln(err)
+		os.Exit(1)
+	}
 
 	rootCmd.AddCommand(
 		versionCmd,
@@ -80,7 +83,10 @@ func initConfig() {
 	viper.AddConfigPath("/etc/updatefactory/")  // path to look for the config file in
 	viper.AddConfigPath("$HOME/.updatefactory") // call multiple times to add many search paths
 	viper.AddConfigPath(".")                    // optionally look for config in the working directory
-	viper.ReadInConfig()                        // Find and read the config file
+	// Find and read the config file
+	if err := viper.ReadInConfig(); err != nil {
+		logrus.Errorln(err)
+	}
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		logrus.Infof("Config file changed:", e.Name)

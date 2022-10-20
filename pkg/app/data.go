@@ -77,7 +77,9 @@ func (d *Data) RunUpdatePipeline() error {
 	case 1:
 		for i := range pipeline.SCMs {
 			scm := pipeline.SCMs[i]
-			scm.Handler.Clone()
+			if _, err := scm.Handler.Clone(); err != nil {
+				logrus.Errorln(err)
+			}
 		}
 	default:
 		logrus.Errorf("%d scm configuration detected in update manifest, only one will be considered")

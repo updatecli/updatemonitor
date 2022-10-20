@@ -41,7 +41,9 @@ func (e *Engine) StartRunner() {
 	if len(e.Options.Dashboards) > 0 {
 		for i := range e.Options.Dashboards {
 			d := e.Options.Dashboards[i]
-			d.Init()
+			if err := d.Init(); err != nil {
+				logrus.Errorln(err)
+			}
 			err := d.Save()
 			if err != nil {
 				logrus.Errorln(err)
