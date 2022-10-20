@@ -61,18 +61,14 @@ func (a *App) Run() error {
 
 	logrus.Infof("Updating App %q\n", a.ID.String())
 
-	if !a.Current.IsZero() {
-		err := a.Current.Run()
-		if err != nil {
-			errs = append(errs, fmt.Errorf("current - %s", err))
-		}
+	err := a.Current.RunUpdatePipeline()
+	if err != nil {
+		errs = append(errs, fmt.Errorf("current - %s", err))
 	}
 
-	if !a.Expected.IsZero() {
-		err := a.Expected.Run()
-		if err != nil {
-			errs = append(errs, fmt.Errorf("expected - %s", err))
-		}
+	err = a.Expected.RunUpdatePipeline()
+	if err != nil {
+		errs = append(errs, fmt.Errorf("expected - %s", err))
 	}
 
 	switch a.Expected.Data.Version == a.Current.Data.Version {

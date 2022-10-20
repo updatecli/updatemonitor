@@ -1,5 +1,6 @@
 database:
   uri: mongodb://admin:password@localhost:27017
+  # uri: mongodb://admin:password@mongodb:27017
 dashboards:
   - name: Dashboard 1
     projects:
@@ -11,16 +12,31 @@ dashboards:
               data:
                 name: Current Version
                 description: This is the current data description
-              datasource: |
-                kind: jenkins
-                spec:
-                  release: weekly
+              updatemanifest: |
+                scms:
+                  default:
+                    kind: git
+                    spec:
+                      url: https://github.com/updatecli/updatecli-action.git
+                      branch: v2
+                sources:
+                  default:
+                    kind: yaml
+                    scmid: default
+                    spec:
+                      file: action.yaml
+                      key: "inputs.version.default"
             expected:
               data:
                 name: Expected Version
                 description: This is the expected description
-              datasource: |
-                kind: jenkins
-                spec:
-                  release: weekly
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: updatecli
+                      repository: updatecli
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
 

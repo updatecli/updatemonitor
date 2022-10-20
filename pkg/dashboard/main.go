@@ -160,8 +160,8 @@ func (d *Dashboard) Init() error {
 
 func (d *Dashboard) Run() error {
 
-	for _, project := range d.Projects {
-		for _, app := range project.Apps {
+	for i, project := range d.Projects {
+		for j, app := range project.Apps {
 			if err := app.Run(); err != nil {
 				logrus.Errorln(err)
 				continue
@@ -171,7 +171,10 @@ func (d *Dashboard) Run() error {
 				logrus.Errorln(err)
 				continue
 			}
+			project.Apps[j] = app
 		}
+
+		d.Projects[i] = project
 	}
 
 	return nil

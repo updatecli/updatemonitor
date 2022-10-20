@@ -63,6 +63,10 @@ func init() {
 
 	viper.BindPFlag("debug", rootCmd.Flags().Lookup("debug"))
 
+	rootCmd.AddCommand(
+		versionCmd,
+	)
+
 }
 
 func initConfig() {
@@ -80,7 +84,6 @@ func initConfig() {
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		logrus.Infof("Config file changed:", e.Name)
-
 	})
 	viper.WatchConfig()
 
