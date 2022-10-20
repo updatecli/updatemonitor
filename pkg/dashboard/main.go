@@ -44,10 +44,8 @@ func SearchAll() ([]Dashboard, error) {
 	collection := database.Client.Database(DatabaseName).Collection(DatabaseCollection)
 
 	var dashboards []Dashboard
-	//
 	var searchLimit int64 = 10
 
-	//filter := bson.D{{Key: "id", Value: "xxx"}}
 	filter := bson.D{}
 	findOptions := options.FindOptions{
 		Limit: &searchLimit,
@@ -58,12 +56,6 @@ func SearchAll() ([]Dashboard, error) {
 			},
 		},
 	}
-	//findOptions.SetSort(bson.D{
-	//	{
-	//		Key:   "updatedAt",
-	//		Value: -1,
-	//	},
-	//})
 
 	cursor, err := collection.Find(context.TODO(), filter, &findOptions)
 

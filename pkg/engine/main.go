@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/updatecli/updateserver/pkg/api"
 	"github.com/updatecli/updateserver/pkg/dashboard"
 	"github.com/updatecli/updateserver/pkg/database"
+	"github.com/updatecli/updateserver/pkg/server"
 )
 
 var (
@@ -26,7 +26,7 @@ type Engine struct {
 }
 
 func (e *Engine) StartServer() {
-	api.Run()
+	server.Run()
 }
 
 func (e *Engine) StartRunner() {

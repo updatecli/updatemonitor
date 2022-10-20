@@ -59,7 +59,7 @@ func (a *App) Run() error {
 		a.ID = primitive.NewObjectID()
 	}
 
-	logrus.Infof("Updating App %q", a.ID.String())
+	logrus.Infof("Updating App %q\n", a.ID.String())
 
 	if !a.Current.IsZero() {
 		err := a.Current.Run()
