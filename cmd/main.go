@@ -82,8 +82,7 @@ func run(command string) error {
 	var o engine.Options
 
 	if err := viper.Unmarshal(&o); err != nil {
-		logrus.Errorln(err)
-		os.Exit(1)
+		return err
 	}
 
 	e := engine.Engine{
