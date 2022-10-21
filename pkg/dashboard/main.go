@@ -85,7 +85,6 @@ func DeletebyID(ID string) (*mongo.DeleteResult, error) {
 	var dashboard Dashboard
 
 	objId, err := primitive.ObjectIDFromHex(ID)
-	//
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +109,6 @@ func SearchbyID(ID string) (Dashboard, error) {
 	var dashboard Dashboard
 
 	objId, err := primitive.ObjectIDFromHex(ID)
-	//
 	if err != nil {
 		return dashboard, err
 	}
@@ -223,8 +221,8 @@ func (d Dashboard) Save() error {
 		return err
 	}
 
-	fmt.Printf("Number of documents updated: %d\n", result.ModifiedCount)
-	fmt.Printf("Number of documents upserted: %d\n", result.UpsertedCount)
+	logrus.Debugf("Number of documents updated: %d\n", result.ModifiedCount)
+	logrus.Debugf("Number of documents upserted: %d\n", result.UpsertedCount)
 	return nil
 }
 
@@ -269,7 +267,7 @@ func (d Dashboard) SaveByID(ID string) (*mongo.UpdateResult, error) {
 		return nil, err
 	}
 
-	fmt.Printf("Number of documents updated: %d\n", result.ModifiedCount)
-	fmt.Printf("Number of documents upserted: %d\n", result.UpsertedCount)
+	logrus.Debugf("Number of documents updated: %d\n", result.ModifiedCount)
+	logrus.Debugf("Number of documents upserted: %d\n", result.UpsertedCount)
 	return result, nil
 }

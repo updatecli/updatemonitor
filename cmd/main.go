@@ -21,21 +21,6 @@ var (
 		Use:   "updatefactory",
 		Short: "updatefactory is the server alternative to Updatecli",
 		Long:  `A long running Updatecli pipeline`,
-		Run: func(cmd *cobra.Command, args []string) {
-
-			var o engine.Options
-
-			if err := viper.Unmarshal(&o); err != nil {
-				logrus.Errorln(err)
-				os.Exit(1)
-			}
-
-			e := engine.Engine{
-				Options: o,
-			}
-
-			e.Start()
-		},
 		PostRun: func(cmd *cobra.Command, args []string) {
 			logrus.Infoln("See you next time")
 		},
@@ -61,13 +46,10 @@ func init() {
 		}
 	}
 
-	if err := viper.BindPFlag("debug", rootCmd.Flags().Lookup("debug")); err != nil {
-		logrus.Errorln(err)
-		os.Exit(1)
-	}
-
 	rootCmd.AddCommand(
 		versionCmd,
+		serverCmd,
+		agentCmd,
 	)
 
 }
@@ -93,4 +75,28 @@ func initConfig() {
 	})
 	viper.WatchConfig()
 
+}
+
+func run(command string) error {
+
+	var o engine.Options
+
+	if err := viper.Unmarshal(&o); err != nil {
+		logrus.Errorln(err)
+		os.Exit(1)
+	}
+
+	e := engine.Engine{
+		Options: o,
+	}
+
+	switch command {
+	case "serverStart":
+		e.StartServer()
+	case "agentStart":
+		e.StartRunner()
+	default:
+		logrus.Warnf("Wrong command %q", command)
+	}
+	return nil
 }

@@ -26,6 +26,10 @@ type Engine struct {
 }
 
 func (e *Engine) StartServer() {
+	if err := database.Connect(e.Options.Database); err != nil {
+		logrus.Errorln(err)
+		os.Exit(1)
+	}
 	server.Run()
 }
 
@@ -71,9 +75,8 @@ func (e *Engine) StartRunner() {
 			}
 		}
 
-		logrus.Infof("work done, doing a 10 secondes break")
-		time.Sleep(10 * time.Second)
-
+		logrus.Debugf("work done, doing a 1 secondes break")
+		time.Sleep(1 * time.Second)
 	}
 
 }

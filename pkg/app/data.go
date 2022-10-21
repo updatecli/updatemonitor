@@ -16,7 +16,7 @@ const (
 )
 
 type Data struct {
-	Data           Spec   `json:"data,omitempty" bson:"data,omitempty"`
+	Spec           Spec   `json:"data,omitempty" bson:"data,omitempty"`
 	UpdateManifest string `json:"updatemanifest,omitempty" bson:"updatemanifest,omitempty"`
 }
 
@@ -25,6 +25,7 @@ func (d Data) IsZero() bool {
 	return d == zero
 }
 
+// Refactor in Updatecli codebase
 func (d *Data) RunUpdatePipeline() error {
 
 	if d.UpdateManifest == "" {
@@ -34,18 +35,29 @@ func (d *Data) RunUpdatePipeline() error {
 
 	currentTime := time.Now().UTC()
 
-	if d.Data.CreatedAt.IsZero() {
-		d.Data.CreatedAt = currentTime
-		d.Data.UpdatedAt = currentTime
+	if d.Spec.CreatedAt.IsZero() {
+		d.Spec.CreatedAt = currentTime
+		d.Spec.UpdatedAt = currentTime
+	}
+
+	if d.Spec.UpdatedAt.After(currentTime.Add(-30 * time.Second)) {
+		logrus.Debugf("Data updated less than 30 seconds ago, skipping")
+		return nil
 	}
 
 	pipelineSpec := updatecliConfig.Spec{}
 	// To implement, templating
+	// Templating is needed to retrieve environment variables
+	t := updatecliConfig.Template{}
 
+	templatedUpdateManifest, err := t.New([]byte(d.UpdateManifest))
+	if err != nil {
+		return err
+	}
 	//
 
-	if err := yaml.Unmarshal([]byte(d.UpdateManifest), &pipelineSpec); err != nil {
-		logrus.Errorln("failed parsing Update manifest - %s", err.Error())
+	if err := yaml.Unmarshal(templatedUpdateManifest, &pipelineSpec); err != nil {
+		logrus.Errorf("failed parsing Update manifest - %s", err.Error())
 		return err
 	}
 
@@ -54,12 +66,12 @@ func (d *Data) RunUpdatePipeline() error {
 	}
 
 	if err := pipelineConfig.EnsureLocalScm(); err != nil {
-		logrus.Errorln("failed generate local scm handler - %s", err.Error())
+		logrus.Errorf("failed generate local scm handler - %s", err.Error())
 		return err
 	}
 
 	if err := pipelineConfig.Validate(); err != nil {
-		logrus.Errorln("failed validating update manifest - %s", err.Error())
+		logrus.Errorf("failed validating update manifest - %s", err.Error())
 		return err
 	}
 
@@ -85,24 +97,24 @@ func (d *Data) RunUpdatePipeline() error {
 		logrus.Errorf("%d scm configuration detected in update manifest, only one will be considered")
 	}
 
-	switch len(pipeline.SCMs) {
+	switch len(pipeline.Sources) {
 	case 0:
 		// nothing to do
 	case 1:
 		for i := range pipeline.Sources {
 			source := pipeline.Sources[i]
 			if err := source.Run(); err != nil {
-				d.Data.Version = ErrData
-				d.Data.UpdatedAt = currentTime
+				d.Spec.Version = ErrData
+				d.Spec.UpdatedAt = currentTime
 				return fmt.Errorf("failed executing source: %s", err.Error())
 			}
 
-			if d.Data.Version != source.Output {
-				d.Data.UpdatedAt = currentTime
-				d.Data.Version = source.Output
+			if d.Spec.Version != source.Output {
+				d.Spec.Version = source.Output
 			}
+			d.Spec.UpdatedAt = currentTime
 
-			logrus.Infof("Version %q retrieved at %q", d.Data.Version, d.Data.UpdatedAt.String())
+			logrus.Infof("Version %q retrieved at %q", d.Spec.Version, d.Spec.UpdatedAt.String())
 		}
 	default:
 		logrus.Errorf("%d source configuration detected in update manifest, only one will be considered")

@@ -53,16 +53,30 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Article deleted successfully", "Data": res})
+	c.JSON(http.StatusCreated, gin.H{"message": "Dashboard deleted successfully", "data": res})
 }
 
 func FindAll(c *gin.Context) {
-	dashboard, err := dashboard.SearchAll()
+	dashboards, err := dashboard.SearchAll()
 	if err != nil {
 		c.JSON(501, gin.H{"err": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"dashboards": dashboard})
+	type data struct {
+		ID   string
+		Name string
+	}
+
+	var dataset []data
+
+	for _, dashboard := range dashboards {
+		dataset = append(dataset, data{
+			ID:   dashboard.ID.Hex(),
+			Name: dashboard.Name,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": dataset})
 }
 
 func FindByID(c *gin.Context) {
@@ -78,7 +92,7 @@ func FindByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "success!", "Data": d})
+	c.JSON(http.StatusCreated, gin.H{"message": "success!", "data": d})
 }
 
 func Landing(c *gin.Context) {
@@ -113,7 +127,7 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "data updated successfully!", "Data": res})
+	c.JSON(http.StatusCreated, gin.H{"message": "data updated successfully!", "data": res})
 }
 
 func Run() {

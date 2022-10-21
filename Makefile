@@ -10,8 +10,11 @@ local_bin=./dist/updatecli_$(shell go env GOHOSTOS)_$(shell go env GOHOSTARCH)/u
 app.build: ## Build application localy
 	go build -o bin/updatefactory
 
-app.start: app.build ## Start application localy
-	./bin/updatefactory
+agent.start: app.build ## Start application localy
+	./bin/updatefactory agent start
+
+server.start: app.build ## Start application localy
+	./bin/updatefactory server start
 
 .PHONY: build
 build: ## Build updatecli as a "dirty snapshot" (no tag, no release, but all OS/arch combinations)

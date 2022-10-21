@@ -59,7 +59,7 @@ func (a *App) Run() error {
 		a.ID = primitive.NewObjectID()
 	}
 
-	logrus.Infof("Updating App %q\n", a.ID.String())
+	logrus.Debugf("Checking App %q\n", a.ID.String())
 
 	err := a.Current.RunUpdatePipeline()
 	if err != nil {
@@ -71,7 +71,7 @@ func (a *App) Run() error {
 		errs = append(errs, fmt.Errorf("expected - %s", err))
 	}
 
-	switch a.Expected.Data.Version == a.Current.Data.Version {
+	switch a.Expected.Spec.Version == a.Current.Spec.Version {
 	case true:
 		a.Status = SUCCESS
 	case false:
@@ -176,8 +176,8 @@ func (a App) Save() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Number of documents updated: %d\n", result.ModifiedCount)
-	fmt.Printf("Number of documents upserted: %d\n", result.UpsertedCount)
+	logrus.Debugf("Number of documents updated: %d\n", result.ModifiedCount)
+	logrus.Debugf("Number of documents upserted: %d\n", result.UpsertedCount)
 
 	return nil
 }
