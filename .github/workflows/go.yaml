@@ -39,9 +39,9 @@ jobs:
       - name: Build
         run: make build
       # Codecov should only be updated if make test is executed
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        if: ${{ github.event_name == 'schedule' }}
+      #- name: Upload coverage to Codecov
+      #  uses: codecov/codecov-action@v3
+      #  if: ${{ github.event_name == 'schedule' }}
       # Manage and run your integration tests with efficiency
       # https://github.com/ovh/venom
 
