@@ -19,6 +19,7 @@ type Options struct {
 	// Engine Options
 	Dashboards []dashboard.Dashboard
 	Database   database.Options
+	Server     server.Options
 }
 
 type Engine struct {
@@ -30,7 +31,11 @@ func (e *Engine) StartServer() {
 		logrus.Errorln(err)
 		os.Exit(1)
 	}
-	server.Run()
+
+	s := server.Server{
+		Options: e.Options.Server,
+	}
+	s.Run()
 }
 
 func (e *Engine) SaveConfigDashboard() error {

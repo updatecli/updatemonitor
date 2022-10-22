@@ -10,6 +10,14 @@ import (
 	"github.com/updatecli/updateserver/pkg/dashboard"
 )
 
+type Options struct {
+	ReadOnly bool
+}
+
+type Server struct {
+	Options Options
+}
+
 func Create(c *gin.Context) {
 
 	var d dashboard.Dashboard
@@ -130,16 +138,18 @@ func Update(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "data updated successfully!", "data": res})
 }
 
-func Run() {
+func (s *Server) Run() {
 	r := gin.Default()
 	r.GET("/", Landing)
 	r.GET("/ping", Ping)
-
 	r.GET("/dashboards", FindAll)
 	r.GET("/dashboards/:id", FindByID)
-	r.POST("/dashboards", Create)
-	r.PUT("/dashboards/:id", Update)
-	r.DELETE("/dashboards/:id", Delete)
+
+	if !s.Options.ReadOnly {
+		r.POST("/dashboards", Create)
+		r.PUT("/dashboards/:id", Update)
+		r.DELETE("/dashboards/:id", Delete)
+	}
 
 	// listen and server on 0.0.0.0:8080
 	if err := r.Run(); err != nil {
