@@ -2,16 +2,38 @@ database:
   uri: mongodb://admin:password@localhost:27017
   # uri: mongodb://admin:password@mongodb:27017
 dashboards:
-  - name: Dashboard 1
+  - name: Updatecli
     projects:
-      - name: Project 1
+      - name: Updatecli
+        description: Monitor Updatecli Version
         apps:
-          - name: "Example App Name"
-            description: "This is an example app description"
+          - name: "Command Line"
+            description: "Monitor Updatecli binary version"
             current:
               data:
-                name: Current Version
-                description: This is the current data description
+                name: Current
+                description: Currently latest version published
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: updatecli
+                      repository: updatecli
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                scms:
+                  default:
+                    kind: git
+                    spec:
+                      url: https://github.com/updatecli/updatecli.git
+                      branch: main
+          - name: "Github Action"
+            description: "Monitor Updatecli version used withing Updatecli Github Action"
+            current:
+              data:
+                name: Current
+                description: Currently latest version published
               updatemanifest: |
                 scms:
                   default:
@@ -28,8 +50,8 @@ dashboards:
                       key: "inputs.version.default"
             expected:
               data:
-                name: Expected Version
-                description: This is the expected description
+                name: Expected
+                description: Expected version based on latest Updatecli version published on Github Release
               updatemanifest: |
                 sources:
                   default:
@@ -39,4 +61,103 @@ dashboards:
                       repository: updatecli
                       username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
                       token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+          - name: "DockerHub Image"
+            description: "Monitor Latest Updatecli Docker Image tag published on DockerHub"
+            current:
+              data:
+                name: Current
+                description: Currently latest version published
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: dockerimage
+                    spec:
+                      image: updatecli/updatecli
+                      versionfilter:
+                        kind: semver
+            expected:
+              data:
+                name: Expected
+                description: Expected version based on latest Updatecli version published on Github Release
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: updatecli
+                      repository: updatecli
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+
+          - name: "Ghcr Image"
+            description: "Monitor Latest Updatecli Docker Image tag published on ghcr.io"
+            current:
+              data:
+                name: Current
+                description: Currently latest version published
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: dockerimage
+                    spec:
+                      image: ghcr.io/updatecli/updatecli
+                      versionfilter:
+                        kind: semver
+            expected:
+              data:
+                name: Expected
+                description: Expected version based on latest Updatecli version published on Github Release
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: updatecli
+                      repository: updatecli
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+      - name: Golang
+        description: Monitor Golang version used accross the Updatecli project
+        apps:
+          - name: "Updatecli CodeBase"
+            description: "Monitor Golang version used within Updatecli"
+            current:
+              data:
+                name: Current
+                description: Currently latest version published
+              updatemanifest: |
+                scms:
+                  default:
+                    kind: git
+                    spec:
+                      url: https://github.com/updatecli/updatecli.git
+                      branch: main
+                sources:
+                  default:
+                    name: Get Latest Go Release
+                    kind: file
+                    spec:
+                      file: go.mod
+                      line: 3
+                    transformers:
+                      - trimprefix: 'go ' 
+            expected:
+              data:
+                name: Expected
+                description: Latest Golang version published
+              updatemanifest: |
+                sources:
+                  default:
+                    name: Get Latest Go Release
+                    kind: githubrelease
+                    transformers:
+                      - trimprefix: go
+                    spec:
+                        owner: golang
+                        repository: go
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        versionfilter:
+                            kind: regex
+                            pattern: go1\.(\d*)\.(\d*)$
 
