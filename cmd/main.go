@@ -72,6 +72,18 @@ func initConfig() {
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		logrus.Infof("Config file changed:", e.Name)
+		var o engine.Options
+
+		if err := viper.Unmarshal(&o); err != nil {
+			logrus.Errorln(err)
+		}
+
+		engine := engine.Engine{
+			Options: o,
+		}
+		if err := engine.SaveConfigDashboard(); err != nil {
+			logrus.Errorln(err)
+		}
 	})
 	viper.WatchConfig()
 
