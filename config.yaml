@@ -1,9 +1,85 @@
+server:
+  dryrun: false
 database:
   uri: mongodb://admin:password@localhost:27017
   # uri: mongodb://admin:password@mongodb:27017
 dashboards:
   - name: Updatecli
     projects:
+      - name: Hugo
+        description: Monitor Hugo version used accross Updatecli project
+        apps:
+          - name: "Github Action"
+            description: "Ensure Github Action uses the latest Hugo"
+            current:
+              data:
+                name: Current
+                description: Current Hugo
+              updatemanifest: |
+                scms:
+                  default:
+                    kind: git
+                    spec:
+                      url: https://github.com/updatecli/website.git
+                      branch: master
+                sources:
+                  default:
+                    kind: yaml
+                    scmid: default
+                    spec:
+                      file: .github/workflows/build.yaml
+                      key: jobs.build.steps[2].with.hugo-version
+            expected:
+              data:
+                name: Expected
+                description: Latest Upstream Hugo version
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: gohugoio
+                      repository: hugo
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                    transformers:
+                      - trimprefix: v
+          - name: "Netlify"
+            description: "Ensure Netlify uses the latest Hugo"
+            current:
+              data:
+                name: Current
+                description: Current Hugo
+              updatemanifest: |
+                scms:
+                  default:
+                    kind: git
+                    spec:
+                      url: https://github.com/updatecli/website.git
+                      branch: master
+                sources:
+                  default:
+                    kind: toml
+                    scmid: default
+                    spec:
+                      file: netlify.toml
+                      key: build.environment.HUGO_VERSION
+            expected:
+              data:
+                name: Expected
+                description: Latest Upstream Hugo version
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: gohugoio
+                      repository: hugo
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                    transformers:
+                      - trimprefix: v
+
       - name: Updatecli
         description: Monitor Updatecli Version
         apps:
@@ -22,12 +98,6 @@ dashboards:
                       repository: updatecli
                       username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
                       token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-                scms:
-                  default:
-                    kind: git
-                    spec:
-                      url: https://github.com/updatecli/updatecli.git
-                      branch: main
           - name: "Github Action"
             description: "Monitor Updatecli version used withing Updatecli Github Action"
             current:
@@ -136,11 +206,12 @@ dashboards:
                   default:
                     name: Get Latest Go Release
                     kind: file
+                    scmid: default
                     spec:
                       file: go.mod
                       line: 3
                     transformers:
-                      - trimprefix: 'go ' 
+                      - trimprefix: 'go '
             expected:
               data:
                 name: Expected
@@ -152,6 +223,8 @@ dashboards:
                     kind: githubrelease
                     transformers:
                       - trimprefix: go
+                      - findsubmatch:
+                          pattern: '^(\d*).(\d*)'
                     spec:
                         owner: golang
                         repository: go
