@@ -92,7 +92,7 @@ func DeletebyID(ID string) (*mongo.DeleteResult, error) {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	result, err := collection.DeleteOne(ctx, bson.M{"id": objId})
+	result, err := collection.DeleteOne(ctx, bson.M{"_id": objId})
 	defer cancel()
 
 	if err != nil {
