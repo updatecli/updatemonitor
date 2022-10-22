@@ -40,7 +40,7 @@ func (d *Data) RunUpdatePipeline() error {
 		d.Spec.UpdatedAt = currentTime
 	}
 
-	if d.Spec.UpdatedAt.After(currentTime.Add(-30 * time.Second)) {
+	if d.Spec.UpdatedAt.After(currentTime.Add(-60 * time.Second)) {
 		logrus.Debugf("Data updated less than 30 seconds ago, skipping")
 		return nil
 	}
