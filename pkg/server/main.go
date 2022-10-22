@@ -63,8 +63,8 @@ func FindAll(c *gin.Context) {
 	}
 
 	type data struct {
-		ID   string
-		Name string
+		ID   string `json:"id,omitempty"`
+		Name string `json:"name,omitempty"`
 	}
 
 	var dataset []data
