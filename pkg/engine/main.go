@@ -33,6 +33,29 @@ func (e *Engine) StartServer() {
 	server.Run()
 }
 
+func (e *Engine) SaveConfigDashboard() error {
+
+	if len(e.Options.Dashboards) == 0 {
+		return nil
+	}
+
+	if err := database.Connect(e.Options.Database); err != nil {
+		return err
+	}
+
+	for i := range e.Options.Dashboards {
+		d := e.Options.Dashboards[i]
+		if err := d.Init(); err != nil {
+			return err
+		}
+		err := d.Save()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (e *Engine) StartRunner() {
 	var dashboards []dashboard.Dashboard
 	var err error
@@ -42,17 +65,9 @@ func (e *Engine) StartRunner() {
 		os.Exit(1)
 	}
 
-	if len(e.Options.Dashboards) > 0 {
-		for i := range e.Options.Dashboards {
-			d := e.Options.Dashboards[i]
-			if err := d.Init(); err != nil {
-				logrus.Errorln(err)
-			}
-			err := d.Save()
-			if err != nil {
-				logrus.Errorln(err)
-			}
-		}
+	if err := e.SaveConfigDashboard(); err != nil {
+		logrus.Errorln(err)
+		os.Exit(1)
 	}
 
 	for {
