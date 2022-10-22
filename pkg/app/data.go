@@ -16,7 +16,7 @@ const (
 )
 
 type Data struct {
-	Spec           Spec   `json:"data,omitempty" bson:"data,omitempty"`
+	Spec           Spec   `json:"spec,omitempty" bson:"spec,omitempty"`
 	UpdateManifest string `json:"updatemanifest,omitempty" bson:"updatemanifest,omitempty"`
 }
 
