@@ -1,5 +1,5 @@
 server:
-  dryrun: false
+  readonly: false
 database:
   uri: mongodb://admin:password@localhost:27017
   # uri: mongodb://admin:password@mongodb:27017
