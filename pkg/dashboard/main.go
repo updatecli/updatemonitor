@@ -143,6 +143,11 @@ func (d *Dashboard) Init() error {
 
 	for i := range d.Projects {
 		project := d.Projects[i]
+
+		if project.ID.IsZero() {
+			project.ID = primitive.NewObjectID()
+		}
+
 		for j := range project.Apps {
 			app := project.Apps[j]
 			err := app.Init()
