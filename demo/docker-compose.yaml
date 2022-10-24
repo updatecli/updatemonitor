@@ -25,6 +25,8 @@ services:
       # If only one port exposed by the container then traefik can detect it
       # - "traefik.http.services.server.loadbalancer.server.port=8080"
 
+  # export UPDATECLI_GITHUB_TOKEN=<your Github PAT>
+  # export UPDATECLI_GITHUB_ACTOR=<your user name>
   agent:
     image: ghcr.io/updatecli/updash:latest
     command: agent start
