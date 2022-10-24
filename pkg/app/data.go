@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	updatecliConfig "github.com/updatecli/updatecli/pkg/core/config"
 	updatecliPipeline "github.com/updatecli/updatecli/pkg/core/pipeline"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/yaml.v3"
 )
 
@@ -16,12 +17,14 @@ const (
 )
 
 type Data struct {
-	Name           string    `json:"name,omitempty" bson:"name,omitempty"`
-	Description    string    `json:"description,omitempty" bson:"description,omitempty"`
-	Version        string    `json:"version,omitempty" bson:"version,omitempty"`
-	CreatedAt      time.Time `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
-	UpdatedAt      time.Time `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
-	UpdateManifest string    `json:"updatemanifest,omitempty" bson:"updatemanifest,omitempty"`
+	ID             primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Name           string             `json:"name,omitempty" bson:"name,omitempty"`
+	Description    string             `json:"description,omitempty" bson:"description,omitempty"`
+	Version        string             `json:"version,omitempty" bson:"version,omitempty"`
+	Changelog      string             `json:"changelog,omitempty" bson:"changelog,omitempty"`
+	CreatedAt      time.Time          `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
+	UpdatedAt      time.Time          `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
+	UpdateManifest string             `json:"updatemanifest,omitempty" bson:"updatemanifest,omitempty"`
 }
 
 func (d Data) IsZero() bool {
@@ -35,6 +38,10 @@ func (d *Data) RunUpdatePipeline() error {
 	if d.UpdateManifest == "" {
 		logrus.Infof("no update manifest provided")
 		return nil
+	}
+
+	if d.ID.IsZero() {
+		d.ID = primitive.NewObjectID()
 	}
 
 	currentTime := time.Now().UTC()
@@ -117,6 +124,7 @@ func (d *Data) RunUpdatePipeline() error {
 				d.Version = source.Output
 			}
 			d.UpdatedAt = currentTime
+			d.Changelog = source.Changelog
 
 			logrus.Infof("Version %q retrieved at %q", d.Version, d.UpdatedAt.String())
 		}
