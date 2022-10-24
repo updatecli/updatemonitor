@@ -1,9 +1,9 @@
 # README
 
-Updash is a new type of application monitoring platform. It brings a lot more flexibility by leveraging [Updatecli](https://updatecli.io).
+Updash is a new type of release monitoring platform. It brings a lot more flexibility by leveraging [Updatecli](https://updatecli.io).
 Updatecli is a declarative dependency manager which allow specifying how a file should be updated based on a data source. While it's handy to automate various process like release process, dependency update, etc. In the context of Updash we reuse the source mechanism to specify what information to monitor.
-When we say "application monitoring platform" it's not totally true because using Updatecli sources, we can monitor more than application.
-We can monitor docker image tag, content of Json file, etc.
+When we say "release monitoring platform" it's not totally true because using Updatecli sources, we can monitor more than releases.
+We can monitor docker image tag, content of Json/CSV/Toml/Yaml file, etc.
 
 WARNING: Updash is still in a very early stage.
 
