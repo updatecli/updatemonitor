@@ -23,10 +23,9 @@ const (
 
 type App struct {
 	ID          primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Current     Data               `json:"current,omitempty" bson:"current,omitempty"`
+	Spec        []Data             `json:"spec,omitempty" bson:"spec,omitempty"`
 	CreatedAt   time.Time          `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
 	Description string             `json:"description,omitempty" bson:"description,omitempty"`
-	Expected    Data               `json:"expected,omitempty" bson:"expected,omitempty"`
 	Status      int                `json:"status,omitempty" bson:"status,omitempty"`
 	Name        string             `json:"name,omitempty" bson:"name,omitempty"`
 	UpdatedAt   time.Time          `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
@@ -34,7 +33,7 @@ type App struct {
 
 func (a *App) Init() error {
 
-	if a.IsZero() {
+	if a.ID.IsZero() {
 		a.ID = primitive.NewObjectID()
 	}
 
@@ -59,19 +58,35 @@ func (a *App) Run() error {
 		a.ID = primitive.NewObjectID()
 	}
 
+	if len(a.Spec) == 0 {
+		return nil
+	}
+
 	logrus.Debugf("Checking App %q\n", a.ID.String())
 
-	err := a.Current.RunUpdatePipeline()
-	if err != nil {
-		errs = append(errs, fmt.Errorf("current - %s", err))
+	for i := range a.Spec {
+		d := a.Spec[i]
+		err := d.RunUpdatePipeline()
+		if err != nil {
+			errs = append(errs, fmt.Errorf("current - %s", err))
+		}
+		a.Spec[i] = d
 	}
 
-	err = a.Expected.RunUpdatePipeline()
-	if err != nil {
-		errs = append(errs, fmt.Errorf("expected - %s", err))
+	matching := true
+	foundValue := ""
+	for i := range a.Spec {
+		if i == 0 {
+			foundValue = a.Spec[i].Version
+		}
+		if foundValue != a.Spec[i].Version {
+			logrus.Println("Value %q mismatch with %q", foundValue, a.Spec[i].Version)
+			matching = false
+			break
+		}
 	}
 
-	switch a.Expected.Spec.Version == a.Current.Spec.Version {
+	switch matching {
 	case true:
 		a.Status = SUCCESS
 	case false:
@@ -122,17 +137,14 @@ func SearchApps() ([]App, error) {
 			break
 		}
 
-		var emptyApp App
-
-		if app == emptyApp {
+		if len(app.Spec) == 0 {
 			return nil, nil
 		}
 
 		apps = append(apps, App{
-			ID:       app.ID,
-			Status:   app.Status,
-			Expected: app.Expected,
-			Current:  app.Current,
+			ID:     app.ID,
+			Status: app.Status,
+			Spec:   app.Spec,
 		})
 	}
 
@@ -157,10 +169,7 @@ func (a App) Save() error {
 		{
 			Key: "$set", Value: bson.D{
 				{
-					Key: "current", Value: a.Current,
-				},
-				{
-					Key: "expected", Value: a.Expected,
+					Key: "data", Value: a.Spec,
 				},
 				{
 					Key: "updatedAt", Value: a.UpdatedAt,
@@ -180,9 +189,4 @@ func (a App) Save() error {
 	logrus.Debugf("Number of documents upserted: %d\n", result.UpsertedCount)
 
 	return nil
-}
-
-func (a App) IsZero() bool {
-	var zero App
-	return a == zero
 }

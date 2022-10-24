@@ -9,112 +9,103 @@ dashboards:
       - name: Fleet
         description: Monitor Rancher Fleet Artifacts
         apps:
-          - name: Binary
+          - name: Application
             description: Monitor https://github.com/rancher/fleet/releases
-            current:
-              data:
-                name: Current
-                description: Curre
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: rancher
-                      repository: fleet
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-                    transformers:
-                      - trimprefix: v
+            spec:
+              - name: Current
+                description: Current
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: rancher
+                        repository: fleet
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                      transformers:
+                        - trimprefix: v
           - name: "Rancher 2.6 Fleet"
             description: Monitor Fleet version used in Rancher 2.6
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Current Dockerfile env
-              updatemanifest: |
-                scms:
-                  default:
-                    kind: git
-                    spec:
-                      url: https://github.com/rancher/rancher.git
-                      branch: release/v2.6
-                sources:
-                  default:
-                    kind: file
-                    scmid: default
-                    spec:
-                      file: package/Dockerfile
-                      matchpattern: 'ENV CATTLE_FLEET_MIN_VERSION.*'
-                    transformers:
-                      - trimprefix: "ENV CATTLE_FLEET_MIN_VERSION="
-          - name: "Rancher Fleet Min Version"
+                updatemanifest: |
+                  scms:
+                    default:
+                      kind: git
+                      spec:
+                        url: https://github.com/rancher/rancher.git
+                        branch: release/v2.6
+                  sources:
+                    default:
+                      kind: file
+                      scmid: default
+                      spec:
+                        file: package/Dockerfile
+                        matchpattern: 'ENV CATTLE_FLEET_MIN_VERSION.*'
+                      transformers:
+                        - trimprefix: "ENV CATTLE_FLEET_MIN_VERSION="
+          - name: "Rancher 2.7 Fleet"
             description: Monitor Fleet version used in Rancher 2.7
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Current Dockerfile env
-              updatemanifest: |
-                scms:
-                  default:
-                    kind: git
-                    spec:
-                      url: https://github.com/rancher/rancher.git
-                      branch: release/v2.7
-                sources:
-                  default:
-                    kind: file
-                    scmid: default
-                    spec:
-                      file: package/Dockerfile
-                      matchpattern: 'ENV CATTLE_FLEET_MIN_VERSION.*'
-                    transformers:
-                      - trimprefix: "ENV CATTLE_FLEET_MIN_VERSION="
-            expected:
-              data:
-                name: Expected
+                updatemanifest: |
+                  scms:
+                    default:
+                      kind: git
+                      spec:
+                        url: https://github.com/rancher/rancher.git
+                        branch: release/v2.7
+                  sources:
+                    default:
+                      kind: file
+                      scmid: default
+                      spec:
+                        file: package/Dockerfile
+                        matchpattern: 'ENV CATTLE_FLEET_MIN_VERSION.*'
+                      transformers:
+                        - trimprefix: "ENV CATTLE_FLEET_MIN_VERSION="
+              - name: Expected
                 description: Expected Dockerfile env value
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: rancher
-                      repository: fleet
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-                    transformers:
-                      - trimprefix: v
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: rancher
+                        repository: fleet
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                      transformers:
+                        - trimprefix: v
           - name: Rancher Fleet DockerHub image tag
             description: Monitor https://hub.docker.com/r/rancher/fleet/tags
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Current Dockerfile env
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: dockerimage
-                    spec:
-                      image: rancher/fleet
-                      versionfilter:
-                        kind: semver
-
-            expected:
-              data:
-                name: Expected
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: dockerimage
+                      spec:
+                        image: rancher/fleet
+                        versionfilter:
+                          kind: semver
+              - name: Expected
                 description: Expected Dockerfile env value
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: rancher
-                      repository: fleet
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-                    transformers:
-                      - trimprefix: v
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: rancher
+                        repository: fleet
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                      transformers:
+                        - trimprefix: v
 
   - name: Updatecli
     projects:
@@ -123,226 +114,205 @@ dashboards:
         apps:
           - name: "Github Action"
             description: "Ensure Github Action uses the latest Hugo"
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Current Hugo
-              updatemanifest: |
-                scms:
-                  default:
-                    kind: git
-                    spec:
-                      url: https://github.com/updatecli/website.git
-                      branch: master
-                sources:
-                  default:
-                    kind: yaml
-                    scmid: default
-                    spec:
-                      file: .github/workflows/build.yaml
-                      key: jobs.build.steps[2].with.hugo-version
-            expected:
-              data:
-                name: Expected
+                updatemanifest: |
+                  scms:
+                    default:
+                      kind: git
+                      spec:
+                        url: https://github.com/updatecli/website.git
+                        branch: master
+                  sources:
+                    default:
+                      kind: yaml
+                      scmid: default
+                      spec:
+                        file: .github/workflows/build.yaml
+                        key: jobs.build.steps[2].with.hugo-version
+              - name: Expected
                 description: Latest Upstream Hugo version
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: gohugoio
-                      repository: hugo
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-                    transformers:
-                      - trimprefix: v
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: gohugoio
+                        repository: hugo
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                      transformers:
+                        - trimprefix: v
           - name: "Netlify"
             description: "Ensure Netlify uses the latest Hugo"
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Current Hugo
-              updatemanifest: |
-                scms:
-                  default:
-                    kind: git
-                    spec:
-                      url: https://github.com/updatecli/website.git
-                      branch: master
-                sources:
-                  default:
-                    kind: toml
-                    scmid: default
-                    spec:
-                      file: netlify.toml
-                      key: build.environment.HUGO_VERSION
-            expected:
-              data:
-                name: Expected
+                updatemanifest: |
+                  scms:
+                    default:
+                      kind: git
+                      spec:
+                        url: https://github.com/updatecli/website.git
+                        branch: master
+                  sources:
+                    default:
+                      kind: toml
+                      scmid: default
+                      spec:
+                        file: netlify.toml
+                        key: build.environment.HUGO_VERSION
+              - name: Expected
                 description: Latest Upstream Hugo version
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: gohugoio
-                      repository: hugo
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-                    transformers:
-                      - trimprefix: v
-
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: gohugoio
+                        repository: hugo
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                      transformers:
+                        - trimprefix: v
       - name: Updatecli
         description: Monitor Updatecli Version
         apps:
           - name: "Command Line"
             description: "Monitor Updatecli binary version"
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Currently latest version published
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: updatecli
-                      repository: updatecli
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: updatecli
+                        repository: updatecli
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
           - name: "Github Action"
             description: "Monitor Updatecli version used withing Updatecli Github Action"
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Currently latest version published
-              updatemanifest: |
-                scms:
-                  default:
-                    kind: git
-                    spec:
-                      url: https://github.com/updatecli/updatecli-action.git
-                      branch: v2
-                sources:
-                  default:
-                    kind: yaml
-                    scmid: default
-                    spec:
-                      file: action.yaml
-                      key: "inputs.version.default"
-            expected:
-              data:
-                name: Expected
+                updatemanifest: |
+                  scms:
+                    default:
+                      kind: git
+                      spec:
+                        url: https://github.com/updatecli/updatecli-action.git
+                        branch: v2
+                  sources:
+                    default:
+                      kind: yaml
+                      scmid: default
+                      spec:
+                        file: action.yaml
+                        key: "inputs.version.default"
+              - name: Expected
                 description: Expected version based on latest Updatecli version published on Github Release
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: updatecli
-                      repository: updatecli
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: updatecli
+                        repository: updatecli
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
           - name: "DockerHub Image"
             description: "Monitor Latest Updatecli Docker Image tag published on DockerHub"
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Currently latest version published
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: dockerimage
-                    spec:
-                      image: updatecli/updatecli
-                      versionfilter:
-                        kind: semver
-            expected:
-              data:
-                name: Expected
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: dockerimage
+                      spec:
+                        image: updatecli/updatecli
+                        versionfilter:
+                          kind: semver
+              - name: Expected
                 description: Expected version based on latest Updatecli version published on Github Release
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: updatecli
-                      repository: updatecli
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: updatecli
+                        repository: updatecli
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
           - name: "Ghcr Image"
             description: "Monitor Latest Updatecli Docker Image tag published on ghcr.io"
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Currently latest version published
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: dockerimage
-                    spec:
-                      image: ghcr.io/updatecli/updatecli
-                      versionfilter:
-                        kind: semver
-            expected:
-              data:
-                name: Expected
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: dockerimage
+                      spec:
+                        image: ghcr.io/updatecli/updatecli
+                        versionfilter:
+                          kind: semver
+              - name: Expected
                 description: Expected version based on latest Updatecli version published on Github Release
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: updatecli
-                      repository: updatecli
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: updatecli
+                        repository: updatecli
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
       - name: Golang
         description: Monitor Golang version used accross the Updatecli project
         apps:
           - name: "Updatecli CodeBase"
             description: "Monitor Golang version used within Updatecli"
-            current:
-              data:
-                name: Current
+            spec:
+              - name: Current
                 description: Currently latest version published
-              updatemanifest: |
-                scms:
-                  default:
-                    kind: git
-                    spec:
-                      url: https://github.com/updatecli/updatecli.git
-                      branch: main
-                sources:
-                  default:
-                    name: Get Latest Go Release
-                    kind: file
-                    scmid: default
-                    spec:
-                      file: go.mod
-                      line: 3
-                    transformers:
-                      - trimprefix: 'go '
-            expected:
-              data:
-                name: Expected
+                updatemanifest: |
+                  scms:
+                    default:
+                      kind: git
+                      spec:
+                        url: https://github.com/updatecli/updatecli.git
+                        branch: main
+                  sources:
+                    default:
+                      name: Get Latest Go Release
+                      kind: file
+                      scmid: default
+                      spec:
+                        file: go.mod
+                        line: 3
+                      transformers:
+                        - trimprefix: 'go '
+              - name: Expected
                 description: Latest Golang version published
-              updatemanifest: |
-                sources:
-                  default:
-                    name: Get Latest Go Release
-                    kind: githubrelease
-                    transformers:
-                      - trimprefix: go
-                      - findsubmatch:
-                          pattern: '^(\d*).(\d*)'
-                    spec:
-                        owner: golang
-                        repository: go
-                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                        versionfilter:
-                            kind: regex
-                            pattern: go1\.(\d*)\.(\d*)$
+                updatemanifest: |
+                  sources:
+                    default:
+                      name: Get Latest Go Release
+                      kind: githubrelease
+                      transformers:
+                        - trimprefix: go
+                        - findsubmatch:
+                            pattern: '^(\d*).(\d*)'
+                      spec:
+                          owner: golang
+                          repository: go
+                          token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                          username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                          versionfilter:
+                              kind: regex
+                              pattern: go1\.(\d*)\.(\d*)$
 

@@ -16,8 +16,12 @@ const (
 )
 
 type Data struct {
-	Spec           Spec   `json:"spec,omitempty" bson:"spec,omitempty"`
-	UpdateManifest string `json:"updatemanifest,omitempty" bson:"updatemanifest,omitempty"`
+	Name           string    `json:"name,omitempty" bson:"name,omitempty"`
+	Description    string    `json:"description,omitempty" bson:"description,omitempty"`
+	Version        string    `json:"version,omitempty" bson:"version,omitempty"`
+	CreatedAt      time.Time `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
+	UpdatedAt      time.Time `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
+	UpdateManifest string    `json:"updatemanifest,omitempty" bson:"updatemanifest,omitempty"`
 }
 
 func (d Data) IsZero() bool {
@@ -35,12 +39,12 @@ func (d *Data) RunUpdatePipeline() error {
 
 	currentTime := time.Now().UTC()
 
-	if d.Spec.CreatedAt.IsZero() {
-		d.Spec.CreatedAt = currentTime
-		d.Spec.UpdatedAt = currentTime
+	if d.CreatedAt.IsZero() {
+		d.CreatedAt = currentTime
+		d.UpdatedAt = currentTime
 	}
 
-	if d.Spec.UpdatedAt.After(currentTime.Add(-60 * time.Second)) {
+	if d.UpdatedAt.After(currentTime.Add(-60 * time.Second)) {
 		logrus.Debugf("Data updated less than 30 seconds ago, skipping")
 		return nil
 	}
@@ -104,17 +108,17 @@ func (d *Data) RunUpdatePipeline() error {
 		for i := range pipeline.Sources {
 			source := pipeline.Sources[i]
 			if err := source.Run(); err != nil {
-				d.Spec.Version = ErrData
-				d.Spec.UpdatedAt = currentTime
+				d.Version = ErrData
+				d.UpdatedAt = currentTime
 				return fmt.Errorf("failed executing source: %s", err.Error())
 			}
 
-			if d.Spec.Version != source.Output {
-				d.Spec.Version = source.Output
+			if d.Version != source.Output {
+				d.Version = source.Output
 			}
-			d.Spec.UpdatedAt = currentTime
+			d.UpdatedAt = currentTime
 
-			logrus.Infof("Version %q retrieved at %q", d.Spec.Version, d.Spec.UpdatedAt.String())
+			logrus.Infof("Version %q retrieved at %q", d.Version, d.UpdatedAt.String())
 		}
 	default:
 		logrus.Errorf("%d source configuration detected in update manifest, only one will be considered")
