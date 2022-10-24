@@ -4,6 +4,118 @@ database:
   uri: mongodb://admin:password@localhost:27017
   # uri: mongodb://admin:password@mongodb:27017
 dashboards:
+  - name: Rancher
+    projects:
+      - name: Fleet
+        description: Monitor Rancher Fleet Artifacts
+        apps:
+          - name: Binary
+            description: Monitor https://github.com/rancher/fleet/releases
+            current:
+              data:
+                name: Current
+                description: Curre
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: rancher
+                      repository: fleet
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                    transformers:
+                      - trimprefix: v
+          - name: "Rancher 2.6 Fleet"
+            description: Monitor Fleet version used in Rancher 2.6
+            current:
+              data:
+                name: Current
+                description: Current Dockerfile env
+              updatemanifest: |
+                scms:
+                  default:
+                    kind: git
+                    spec:
+                      url: https://github.com/rancher/rancher.git
+                      branch: release/v2.6
+                sources:
+                  default:
+                    kind: file
+                    scmid: default
+                    spec:
+                      file: package/Dockerfile
+                      matchpattern: 'ENV CATTLE_FLEET_MIN_VERSION.*'
+                    transformers:
+                      - trimprefix: "ENV CATTLE_FLEET_MIN_VERSION="
+          - name: "Rancher Fleet Min Version"
+            description: Monitor Fleet version used in Rancher 2.7
+            current:
+              data:
+                name: Current
+                description: Current Dockerfile env
+              updatemanifest: |
+                scms:
+                  default:
+                    kind: git
+                    spec:
+                      url: https://github.com/rancher/rancher.git
+                      branch: release/v2.7
+                sources:
+                  default:
+                    kind: file
+                    scmid: default
+                    spec:
+                      file: package/Dockerfile
+                      matchpattern: 'ENV CATTLE_FLEET_MIN_VERSION.*'
+                    transformers:
+                      - trimprefix: "ENV CATTLE_FLEET_MIN_VERSION="
+            expected:
+              data:
+                name: Expected
+                description: Expected Dockerfile env value
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: rancher
+                      repository: fleet
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                    transformers:
+                      - trimprefix: v
+          - name: Rancher Fleet DockerHub image tag
+            description: Monitor https://hub.docker.com/r/rancher/fleet/tags
+            current:
+              data:
+                name: Current
+                description: Current Dockerfile env
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: dockerimage
+                    spec:
+                      image: rancher/fleet
+                      versionfilter:
+                        kind: semver
+
+            expected:
+              data:
+                name: Expected
+                description: Expected Dockerfile env value
+              updatemanifest: |
+                sources:
+                  default:
+                    kind: githubrelease
+                    spec:
+                      owner: rancher
+                      repository: fleet
+                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                    transformers:
+                      - trimprefix: v
+
   - name: Updatecli
     projects:
       - name: Hugo
