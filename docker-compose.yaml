@@ -8,9 +8,3 @@ services:
     ports:
       - 27017:27017
 
-  server:
-    image: ghcr.io/updatecli/updatefactory:v0.0.0-amd64
-    volumes:
-      - "./config.yaml:/home/updatefactory/.updatefactory/config.yaml"
-    ports:
-      - 8080:8080
