@@ -68,3 +68,17 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the configmap to use for configuration
+*/}}
+{{- define "updatemonitor.configMapName" -}}
+{{- default (include "updatemonitor.fullname" .) .Values.configMap.name }}
+{{- end }}
+
+{{/*
+Create the name of the secrets use by updatemonitor agents
+*/}}
+{{- define "updatemonitor.secretName" -}}
+{{- default (include "updatemonitor.fullname" .) .Values.secret.name }}
+{{- end }}

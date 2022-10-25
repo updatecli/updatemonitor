@@ -33,7 +33,10 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.server.repository }}:{{ .Values.image.server.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.server.pullPolicy }}
-          command: {{ .Values.image.server.command }}
+          command:
+            {{- toYaml .Values.image.server.command | nindent 12 }}
+          args:
+            {{- toYaml .Values.image.server.args | nindent 12 }}
           ports:
             - name: http
               containerPort: 8080
@@ -48,6 +51,15 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: "config-volume"
+              mountPath: "/etc/updatemonitor/"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "updatemonitor.configMapName" . }}
+
+
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

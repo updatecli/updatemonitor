@@ -4,21 +4,38 @@
 
 replicaCount: 1
 
+agents:
+#  environments: []
+  environments:
+    - name: UPDATECLI_GITHUB_ACTOR
+      value: xxx
+    - name: UPDATECLI_GITHUB_TOKEN
+      value: yyy
+
 image:
   agent:
     repository: ghcr.io/updatecli/updatemonitor
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "latest"
-    command: ["updatemonitor", "agent", "start"]
+    tag: "v0.1.0"
+    command: 
+      - '/usr/local/bin/updatemonitor'
+    args:
+      - 'agent'
+      - 'start'
   server:
     repository: ghcr.io/updatecli/updatemonitor
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "latest"
-    command: ["updatemonitor", "server", "start"]
+    tag: "v0.1.0"
+    command:
+      - '/usr/local/bin/updatemonitor'
+    args:
+      - 'server'
+      - 'start'
   front:
-    repository: ghcr.io/updatecli/updatemonitor-front
+    # repository: ghcr.io/updatecli/updatemonitor-front
+    repository: ghcr.io/updatecli/updash-front
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -35,6 +52,21 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+
+
+ # The name of the configMap used to store agent and server configuration file.
+ # If not set, a name is generated using the fullname template
+configMap:
+  name: ""
+  # Annotations to add to the configmap
+  annotations: {}
+
+ # The name of the secret used to store agent enviroment variables.
+ # If not set, a name is generated using the fullname template
+secret:
+  name: ""
+  # Annotations to add to the configmap
+  annotations: {}
 
 podAnnotations: {}
 
@@ -105,4 +137,17 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+config:
+  server:
+    readonly: false
+  database:
+    uri: mongodb://admin:password@updatemonitor-mongodb:27017
+
+# Install Mongodb
+mongodb:
+  enabled: true
+  auth:
+    rootUser: admin
+    rootPassword: password
 

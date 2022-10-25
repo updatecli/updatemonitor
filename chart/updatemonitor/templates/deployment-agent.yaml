@@ -33,7 +33,15 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.agent.repository }}:{{ .Values.image.agent.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.agent.pullPolicy }}
-          command: {{ .Values.image.agent.command }}
+          command: 
+            {{- toYaml .Values.image.agent.command | nindent 12 }}
+          args: 
+            {{- toYaml .Values.image.agent.args | nindent 12 }}
+          #command: 
+          #  - "/usr/local/bin/updatemonitor"
+          #args:
+          #  - "agent"
+          #  - "start"
           #livenessProbe:
           #  httpGet:
           #    path: /
@@ -42,8 +50,24 @@ spec:
           #  httpGet:
           #    path: /
           #    port: http
+          env:
+          {{- range .Values.agents.environments }}
+            - name: {{ .name }}
+              valueFrom:
+                secretKeyRef:
+                  {{/* $ in the following statement is need to use the global scope instead of the local one created by the range instruction */}}
+                  name: {{ include "updatemonitor.secretName" $ }}
+                  key: {{ .name }}
+          {{ end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: "config-volume" 
+              mountPath: "/etc/updatemonitor/"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "updatemonitor.configMapName" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
