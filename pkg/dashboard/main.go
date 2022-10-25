@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/updatecli/updateserver/pkg/app"
-	"github.com/updatecli/updateserver/pkg/database"
+	"github.com/updatecli/updatemonitor/pkg/app"
+	"github.com/updatecli/updatemonitor/pkg/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

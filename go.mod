@@ -1,4 +1,4 @@
-module github.com/updatecli/updateserver
+module github.com/updatecli/updatemonitor
 
 go 1.19
 

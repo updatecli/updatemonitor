@@ -10,12 +10,12 @@ import (
 var (
 	serverCmd = &cobra.Command{
 		Use:   "server",
-		Short: "The updatefactory server",
+		Short: "The updatemonitor server",
 	}
 
 	serverStartCmd = &cobra.Command{
 		Use:   "start",
-		Short: "starts an Updatefactory server",
+		Short: "starts an Updatemonitor server",
 		Run: func(cmd *cobra.Command, args []string) {
 			err := run("serverStart")
 			if err != nil {

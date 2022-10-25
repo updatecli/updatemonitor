@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "updash.fullname" . }}
+  name: {{ include "updatemonitor.fullname" . }}
   labels:
-    {{- include "updash.labels" . | nindent 4 }}
+    {{- include "updatemonitor.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "updash.fullname" . }}
+    name: {{ include "updatemonitor.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

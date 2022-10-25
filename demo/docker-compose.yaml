@@ -12,7 +12,7 @@ services:
     image: ghcr.io/updatecli/updash:latest
     command: server start
     volumes:
-      - "./config.yaml:/home/updatefactory/.updatefactory/config.yaml"
+      - "./config.yaml:/home/updatemonitor/.updatemonitor/config.yaml"
     expose:
       - 8080
     labels:
@@ -31,7 +31,7 @@ services:
     image: ghcr.io/updatecli/updash:latest
     command: agent start
     volumes:
-      - "./config.yaml:/home/updatefactory/.updatefactory/config.yaml"
+      - "./config.yaml:/home/updatemonitor/.updatemonitor/config.yaml"
     environment:
       - UPDATECLI_GITHUB_TOKEN=${UPDATECLI_GITHUB_TOKEN}
       - UPDATECLI_GITHUB_ACTOR=${UPDATECLI_GITHUB_ACTOR}

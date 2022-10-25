@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/updatecli/updateserver/pkg/engine"
+	"github.com/updatecli/updatemonitor/pkg/engine"
 )
 
 var (
@@ -18,9 +18,8 @@ var (
 	// Verbose allows to enable/disable debug logging
 	verbose bool
 	rootCmd = &cobra.Command{
-		Use:   "updatefactory",
-		Short: "updatefactory is the server alternative to Updatecli",
-		Long:  `A long running Updatecli pipeline`,
+		Use:   "updatemonitor",
+		Short: "updatemonitor is an Update monitoring platform",
 		PostRun: func(cmd *cobra.Command, args []string) {
 			logrus.Infoln("See you next time")
 		},
@@ -62,8 +61,8 @@ func initConfig() {
 	}
 
 	viper.SetConfigType("yaml")                 // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath("/etc/updatefactory/")  // path to look for the config file in
-	viper.AddConfigPath("$HOME/.updatefactory") // call multiple times to add many search paths
+	viper.AddConfigPath("/etc/updatemonitor/")  // path to look for the config file in
+	viper.AddConfigPath("$HOME/.updatemonitor") // call multiple times to add many search paths
 	viper.AddConfigPath(".")                    // optionally look for config in the working directory
 	// Find and read the config file
 	if err := viper.ReadInConfig(); err != nil {

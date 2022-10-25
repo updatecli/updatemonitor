@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/updatecli/updateserver/pkg/dashboard"
+	"github.com/updatecli/updatemonitor/pkg/dashboard"
 )
 
 type Options struct {

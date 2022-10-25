@@ -1,4 +1,4 @@
-# Default values for updash.
+# Default values for updatemonitor.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -6,19 +6,19 @@ replicaCount: 1
 
 image:
   agent:
-    repository: ghcr.io/updatecli/updash
+    repository: ghcr.io/updatecli/updatemonitor
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
-    command: ["updatefactory", "agent", "start"]
+    command: ["updatemonitor", "agent", "start"]
   server:
-    repository: ghcr.io/updatecli/updash
+    repository: ghcr.io/updatecli/updatemonitor
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
-    command: ["updatefactory", "server", "start"]
+    command: ["updatemonitor", "server", "start"]
   front:
-    repository: ghcr.io/updatecli/updash-front
+    repository: ghcr.io/updatecli/updatemonitor-front
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -66,14 +66,14 @@ ingress:
           pathType: Prefix
           backend:
             service:
-              name: updash-front
+              name: updatemonitor-front
               port:
                 number: 80
         - path: /api
           pathType: Prefix
           backend:
             service:
-              name: updash-server
+              name: updatemonitor-server
               port:
                 number: 8080
   tls: []
@@ -105,3 +105,4 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+

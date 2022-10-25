@@ -8,13 +8,13 @@ local_bin=./dist/updatecli_$(shell go env GOHOSTOS)_$(shell go env GOHOSTARCH)/u
 
 .PHONY: app.build
 app.build: ## Build application localy
-	go build -o bin/updatefactory
+	go build -o bin/updatemonitor
 
 agent.start: app.build ## Start application localy
-	./bin/updatefactory agent start
+	./bin/updatemonitor agent start
 
 server.start: app.build ## Start application localy
-	./bin/updatefactory server start
+	./bin/updatemonitor server start
 
 .PHONY: build
 build: ## Build updatecli as a "dirty snapshot" (no tag, no release, but all OS/arch combinations)
@@ -40,7 +40,7 @@ db.reset: db.delete db.start ## Reset development database
 
 .PHONY: db.connect
 db.connect: ## Connect to development database
-	docker exec -i -t updatefactory-mongodb-1 mongosh mongodb://admin:password@localhost:27017
+	docker exec -i -t updatemonitor-mongodb-1 mongosh mongodb://admin:password@localhost:27017
 
 .PHONY: db.start
 db.start: ## Start development database

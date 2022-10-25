@@ -19,14 +19,14 @@ before:
     - go mod download
 
 builds:
-  - id: updatefactory
+  - id: updatemonitor
     main: ./main.go
-    binary: updatefactory
+    binary: updatemonitor
     ldflags:
       - -w -s
-      - -X "github.com/updatecli/updatefactory/pkg/core/version.BuildTime={{.Date}}"
-      - -X "github.com/updatecli/updatefactory/pkg/core/version.GoVersion={{.Env.GOVERSION}}"
-      - -X "github.com/updatecli/updatefactory/pkg/core/version.Version={{ .Version }}"
+      - -X "github.com/updatecli/updatemonitor/pkg/core/version.BuildTime={{.Date}}"
+      - -X "github.com/updatecli/updatemonitor/pkg/core/version.GoVersion={{.Env.GOVERSION}}"
+      - -X "github.com/updatecli/updatemonitor/pkg/core/version.Version={{ .Version }}"
     goos:
       - linux
       - darwin
@@ -42,8 +42,8 @@ changelog:
 
 dockers:
   - image_templates:
-      - 'updatecli/updatefactory:{{ .Tag }}-amd64'
-      - 'ghcr.io/updatecli/updatefactory:{{ .Tag }}-amd64'
+      - 'updatecli/updatemonitor:{{ .Tag }}-amd64'
+      - 'ghcr.io/updatecli/updatemonitor:{{ .Tag }}-amd64'
     dockerfile: Dockerfile
     use: buildx
     build_flag_templates:
@@ -60,8 +60,8 @@ dockers:
     extra_files:
       - Makefile
   - image_templates:
-      - 'updatecli/updatefactory:{{ .Tag }}-arm64'
-      - 'ghcr.io/updatecli/updatefactory:{{ .Tag }}-arm64'
+      - 'updatecli/updatemonitor:{{ .Tag }}-arm64'
+      - 'ghcr.io/updatecli/updatemonitor:{{ .Tag }}-arm64'
     dockerfile: Dockerfile
     use: buildx
     build_flag_templates:
@@ -79,22 +79,22 @@ dockers:
       - Makefile
 
 docker_manifests:
-  - name_template: 'updatecli/updatefactory:{{ .Tag }}'
+  - name_template: 'updatecli/updatemonitor:{{ .Tag }}'
     image_templates:
-      - 'updatecli/updatefactory:{{ .Tag }}-amd64'
-      - 'updatecli/updatefactory:{{ .Tag }}-arm64'
-  - name_template: 'ghcr.io/updatecli/updatefactory:{{ .Tag }}'
+      - 'updatecli/updatemonitor:{{ .Tag }}-amd64'
+      - 'updatecli/updatemonitor:{{ .Tag }}-arm64'
+  - name_template: 'ghcr.io/updatecli/updatemonitor:{{ .Tag }}'
     image_templates:
-      - 'ghcr.io/updatecli/updatefactory:{{ .Tag }}-amd64'
-      - 'ghcr.io/updatecli/updatefactory:{{ .Tag }}-arm64'
-  - name_template: 'updatecli/updatefactory:latest'
+      - 'ghcr.io/updatecli/updatemonitor:{{ .Tag }}-amd64'
+      - 'ghcr.io/updatecli/updatemonitor:{{ .Tag }}-arm64'
+  - name_template: 'updatecli/updatemonitor:latest'
     image_templates:
-      - 'updatecli/updatefactory:{{ .Tag }}-amd64'
-      - 'updatecli/updatefactory:{{ .Tag }}-arm64'
-  - name_template: 'ghcr.io/updatecli/updatefactory:latest'
+      - 'updatecli/updatemonitor:{{ .Tag }}-amd64'
+      - 'updatecli/updatemonitor:{{ .Tag }}-arm64'
+  - name_template: 'ghcr.io/updatecli/updatemonitor:latest'
     image_templates:
-      - 'ghcr.io/updatecli/updatefactory:{{ .Tag }}-amd64'
-      - 'ghcr.io/updatecli/updatefactory:{{ .Tag }}-arm64'
+      - 'ghcr.io/updatecli/updatemonitor:{{ .Tag }}-amd64'
+      - 'ghcr.io/updatecli/updatemonitor:{{ .Tag }}-arm64'
 
 env:
   - GO111MODULE=on
@@ -103,7 +103,7 @@ env:
 nfpms:
   - file_name_template: '{{ .ProjectName }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     homepage: 'https://www.updatecli.io'
-    description: 'Updatefactory is an Update factory '
+    description: 'Updatemonitor is an Update monitoring platform'
     maintainer: 'Olivier Vernin <olivier@vernin.me>'
     vendor: Updatecli
     formats:

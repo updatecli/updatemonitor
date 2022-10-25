@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/updatecli/updateserver/pkg/dashboard"
-	"github.com/updatecli/updateserver/pkg/database"
-	"github.com/updatecli/updateserver/pkg/server"
+	"github.com/updatecli/updatemonitor/pkg/dashboard"
+	"github.com/updatecli/updatemonitor/pkg/database"
+	"github.com/updatecli/updatemonitor/pkg/server"
 )
 
 var (

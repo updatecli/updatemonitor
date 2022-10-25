@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/updatecli/updateserver/cmd"
+	"github.com/updatecli/updatemonitor/cmd"
 )
 
 func main() {
