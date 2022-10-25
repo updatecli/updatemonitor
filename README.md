@@ -1,34 +1,36 @@
 # README
 
-Updash is a new type of release monitoring platform. It brings a lot more flexibility by leveraging [Updatecli](https://updatecli.io).
+Updash is a new type of release monitoring platform. It brings more flexibility by leveraging [Updatecli](https://updatecli.io).
 Updatecli is a declarative dependency manager which allow specifying how a file should be updated based on a data source. While it's handy to automate various process like release process, dependency update, etc. In the context of Updash we reuse the source mechanism to specify what information to monitor.
-When we say "release monitoring platform" it's not totally true because using Updatecli sources, we can monitor more than releases.
+So, when we say "release monitoring platform" it's not totally true because using Updatecli sources, we can monitor more than releases.
 We can monitor docker image tag, content of Json/CSV/Toml/Yaml file, etc.
 
-WARNING: Updash is still in a very early stage.
+---
+WARNING: Updash is still in a very early stage. We encourage you to provide feedback to help shape the direction of the project.
+---
 
 The Updash service application is composed of the components
 
 .1 Updash Server
 .1 Updash Runner 
 .1 Updash Frontend
-.1 Mongodb
+.1 Database
 
 ## Components
 
 ### Server
 
-The Updash server responsibility is to answer http request. It accepts the following endpoints
+The Updash server, is an API designed to answer http requests and accepts the following endpoints:
 
 #### Endpoints
 ##### [GET] /dashboards
-Return a list of dashboards namd and idea binded to a user.
+Return a list of dashboards name and idea binded to a user.
 
 ##### [POST] /dashboards
 Add a new dashboard.
 
 ##### [GET] /dashboards/:id
-Return a all information for a dashboard id.
+Return all information for a dashboard identified by its id.
 
 ##### [DELETE] /dashboards/:id
 Delete the dashboard identified by its ID.
@@ -38,13 +40,15 @@ Update the dashboard identified by its ID.
 
 ### Agent
 
-The Updash agent is responsible to run Updatecli on each Update manifest retrieved from the mongo database and then store it back with the result updated.
-The update manifest used by Updash only allow maximum one scm configuration and one source manifest.
+The Updash agent is responsible to run Updatecli for each "Update manifest" retrieved from the database. Then it stores back the updated result.
+The "update manifest" used by Updash only allow maximum one scm configuration and one source manifest.
+I doesn't make sense in the context of Updash to run condition or targets.
 
-IMPORTANT: All credentials required by an `Updatemanifest`, must be configured in the Updash agent. This includes docker credentials, envrironment variables, ssh keys,...
+IMPORTANT: At the moment, all credentials required by an `Updatemanifest`, must be configured in the Updash agent. This includes docker credentials, envrironment variables, ssh keys,...
 
 ## Settings 
-Both Updash agent and Updash server relies on the same setting file.
+Both Updash agent and Updash server relies on the same setting file. As in the following example.
+Please note that dashboard configuration is directly uploaded in the database. And, any configuration file change will overide the same dashboard data in the database.
 
 ```
 # Specific Server settings
