@@ -62,46 +62,27 @@ database:
   # uri specifies the database uri used both by the Updatemonitor server and agent
   uri: mongodb://admin:password@mongodb:27017
 dashboards:
-  - name: Updatecli
+  - name: Rancher
     projects:
-      - name: Hugo
-        description: Monitor Hugo version used accross Updatecli project
+      - name: Fleet
+        description: Monitor Rancher Fleet Artifacts
         apps:
-          - name: "Github Action"
-            description: "Ensure Github Action uses the latest Hugo"
-            current:
-              data:
-                name: Current
-                description: Current Hugo
-              updatemanifest: |
-                scms:
-                  default:
-                    kind: git
-                    spec:
-                      url: https://github.com/updatecli/website.git
-                      branch: master
-                sources:
-                  default:
-                    kind: yaml
-                    scmid: default
-                    spec:
-                      file: .github/workflows/build.yaml
-                      key: jobs.build.steps[2].with.hugo-version
-            expected:
-              data:
-                name: Expected
-                description: Latest Upstream Hugo version
-              updatemanifest: |
-                sources:
-                  default:
-                    kind: githubrelease
-                    spec:
-                      owner: gohugoio
-                      repository: hugo
-                      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
-                      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-                    transformers:
-                      - trimprefix: v
+          - name: Application
+            description: Monitor https://github.com/rancher/fleet/releases
+            spec:
+              - name: Current
+                description: Current
+                updatemanifest: |
+                  sources:
+                    default:
+                      kind: githubrelease
+                      spec:
+                        owner: rancher
+                        repository: fleet
+                        username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+                        token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+                      transformers:
+                        - trimprefix: v
 ```
 
 ## Contributing
