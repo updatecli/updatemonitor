@@ -15,6 +15,7 @@ LABEL org.opencontainers.image.documentation="https://www.updatecli.io/docs/prol
 LABEL org.opencontainers.image.title="Updatemonitor"
 LABEL org.opencontainers.image.description="A declarative update manager"
 LABEL org.opencontainers.image.base.name="ghcr.io/updatecli/updatemonitor"
+LABEL org.opencontainers.image.licenses="AGPL-3.0"
 
 # /tmp is used by updatecli to store git repository so it's better
 # to define a volume

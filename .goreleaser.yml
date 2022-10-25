@@ -11,7 +11,7 @@ archives:
         format: zip
     files:
       - README.md
-      # - LICENSE
+      - LICENSE
 
 before:
   hooks:
