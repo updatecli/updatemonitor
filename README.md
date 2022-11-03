@@ -135,6 +135,28 @@ The local dev config relies on
 A frontend application is available on [github.com/updatecli/app-dashboard](https://github.com/updatecli/app-dashboard/tree/next) on the branch `next`
 A README is available with basic instructions on how to build and run a local version of the web app
 
+## DEMO
+
+A demo environment is available in the `demo` directory.
+
+It requires `docker compose` and a read-only Github PAT to query Github API for retrieving information.
+
+To see what updatemonitor looks like with real data, you can execute the following commands
+
+To start the demo environment:
+```
+export UPDATECLI_GITHUB_TOKEN=ghp_***
+export UPDATECLI_GITHUB_ACTOR=<username>
+docker compose up -d 
+```
+Then you need to wait a minute or two for Updatemonitor to start retrieving information
+```
+# To show agent logs
+docker logs -f demo-agent-1
+# To show server logs
+docker logs -f demo-server-1 -f
+```
+Now you can visit http://localhost
 
 ## Links
 
