@@ -19,7 +19,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.19.2
+          go-version: 1.19.3
         id: go
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
@@ -38,10 +38,9 @@ jobs:
         run: goreleaser --version
       - name: Build
         run: make build
-      # Codecov should only be updated if make test is executed
-      #- name: Upload coverage to Codecov
-      #  uses: codecov/codecov-action@v3
-      #  if: ${{ github.event_name == 'schedule' }}
-      # Manage and run your integration tests with efficiency
-      # https://github.com/ovh/venom
-
+    # Codecov should only be updated if make test is executed
+    #- name: Upload coverage to Codecov
+    #  uses: codecov/codecov-action@v3
+    #  if: ${{ github.event_name == 'schedule' }}
+    # Manage and run your integration tests with efficiency
+    # https://github.com/ovh/venom
