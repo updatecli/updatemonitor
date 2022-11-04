@@ -10,7 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.13.0
-	github.com/updatecli/updatecli v0.36.0
+	github.com/updatecli/updatecli v0.36.1
 	go.mongodb.org/mongo-driver v1.10.3
 	gopkg.in/yaml.v3 v3.0.1
 )
