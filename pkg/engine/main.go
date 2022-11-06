@@ -70,6 +70,10 @@ func (e *Engine) StartRunner() {
 		os.Exit(1)
 	}
 
+	if err := dashboard.SetCollationIndexes(); err != nil {
+		logrus.Errorf("Failed configuration dashboard collation indexes %s", err)
+	}
+
 	if err := e.SaveConfigDashboard(); err != nil {
 		logrus.Errorln(err)
 		os.Exit(1)

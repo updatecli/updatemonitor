@@ -104,6 +104,41 @@ func DeletebyID(ID string) (*mongo.DeleteResult, error) {
 	return result, nil
 }
 
+func SetCollationIndexes() error {
+
+	collection := database.Client.Database(DatabaseName).Collection(DatabaseCollection)
+
+	uniq := true
+	model := mongo.IndexModel{
+		Keys: bson.D{
+			{
+				Key:   "name",
+				Value: 1,
+			},
+			{
+				Key:   "owner",
+				Value: 1,
+			},
+		},
+		Options: &options.IndexOptions{
+			Unique: &uniq,
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	result, err := collection.Indexes().CreateOne(ctx, model)
+	defer cancel()
+
+	if err != nil {
+		logrus.Errorln(err)
+		return err
+	}
+
+	logrus.Debugf("collection %q - Index creation : %s", DatabaseCollection, result)
+
+	return nil
+}
+
 func SearchbyID(ID string) (Dashboard, error) {
 
 	collection := database.Client.Database(DatabaseName).Collection(DatabaseCollection)
@@ -121,8 +156,7 @@ func SearchbyID(ID string) (Dashboard, error) {
 	result := collection.FindOne(ctx, filter)
 	defer cancel()
 
-	err = result.Decode(&dashboard)
-	if err != nil {
+	if err = result.Decode(&dashboard); err != nil {
 		logrus.Println(dashboard)
 		logrus.Errorln(err)
 		return dashboard, err
