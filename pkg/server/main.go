@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/updatecli/updatemonitor/pkg/dashboard"
+	"github.com/updatecli/updatemonitor/pkg/version"
 )
 
 type Options struct {
@@ -111,6 +112,23 @@ func Ping(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "pong"})
 }
 
+func About(c *gin.Context) {
+
+	v := struct {
+		Golang    string
+		Api       string
+		BuildTime string
+	}{
+		Golang:    version.GoVersion,
+		Api:       version.Version,
+		BuildTime: version.BuildTime,
+	}
+
+	c.JSON(200, gin.H{
+		"version": v,
+	})
+}
+
 func Update(c *gin.Context) {
 
 	ID := c.Param("id")
@@ -142,6 +160,7 @@ func (s *Server) Run() {
 	r := gin.Default()
 	r.GET("/", Landing)
 	r.GET("/ping", Ping)
+	r.GET("/about", About)
 	r.GET("/dashboards", FindAll)
 	r.GET("/dashboards/:id", FindByID)
 

@@ -24,9 +24,9 @@ builds:
     binary: updatemonitor
     ldflags:
       - -w -s
-      - -X "github.com/updatecli/updatemonitor/pkg/core/version.BuildTime={{.Date}}"
-      - -X "github.com/updatecli/updatemonitor/pkg/core/version.GoVersion={{.Env.GOVERSION}}"
-      - -X "github.com/updatecli/updatemonitor/pkg/core/version.Version={{ .Version }}"
+      - -X "github.com/updatecli/updatemonitor/pkg/version.BuildTime={{.Date}}"
+      - -X "github.com/updatecli/updatemonitor/pkg/version.GoVersion={{.Env.GOVERSION}}"
+      - -X "github.com/updatecli/updatemonitor/pkg/version.Version={{ .Version }}"
     goos:
       - linux
       - darwin

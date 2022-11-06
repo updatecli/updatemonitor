@@ -8,7 +8,8 @@ local_bin=./dist/updatecli_$(shell go env GOHOSTOS)_$(shell go env GOHOSTARCH)/u
 
 .PHONY: app.build
 app.build: ## Build application localy
-	go build -o bin/updatemonitor
+	go build -o bin/updatemonitor \
+		-ldflags='-w -s -X "github.com/updatecli/updatemonitor/pkg/version.BuildTime=$(shell date)" -X "github.com/updatecli/updatemonitor/pkg/version.GoVersion=$(shell go version)" -X "github.com/updatecli/updatemonitor/pkg/version.Version=42"'
 
 agent.start: app.build ## Start application localy
 	./bin/updatemonitor agent start
