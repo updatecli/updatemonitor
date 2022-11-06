@@ -80,7 +80,7 @@ func (a *App) Run() error {
 			foundValue = a.Spec[i].Version
 		}
 		if foundValue != a.Spec[i].Version {
-			logrus.Println("Value %q mismatch with %q", foundValue, a.Spec[i].Version)
+			logrus.Printf("Value %q mismatch with %q", foundValue, a.Spec[i].Version)
 			matching = false
 			break
 		}
