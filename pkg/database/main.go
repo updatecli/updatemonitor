@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -9,8 +10,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const (
+	URIEnvVariableName string = "UPDATEMONITOR_DB_URI"
+)
+
 var (
 	Client *mongo.Client
+
+	URI string = os.Getenv(URIEnvVariableName)
 )
 
 type Options struct {
@@ -22,7 +29,14 @@ func Connect(o Options) error {
 
 	var err error
 
-	clientOptions := options.Client().ApplyURI(o.URI)
+	if o.URI != "" {
+		if URI != "" {
+			logrus.Debugf("URI %q defined from setting file override the value from environment variable  %q", o.URI, URIEnvVariableName)
+		}
+		URI = o.URI
+	}
+
+	clientOptions := options.Client().ApplyURI(URI)
 
 	Client, err = mongo.Connect(context.TODO(), clientOptions)
 
