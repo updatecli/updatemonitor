@@ -158,16 +158,16 @@ func Update(c *gin.Context) {
 
 func (s *Server) Run() {
 	r := gin.Default()
-	r.GET("/", Landing)
-	r.GET("/ping", Ping)
-	r.GET("/about", About)
-	r.GET("/dashboards", FindAll)
-	r.GET("/dashboards/:id", FindByID)
+	r.GET("/api/", Landing)
+	r.GET("/api/ping", Ping)
+	r.GET("/api/about", About)
+	r.GET("/api/dashboards", FindAll)
+	r.GET("/api/dashboards/:id", FindByID)
 
 	if !s.Options.ReadOnly {
-		r.POST("/dashboards", Create)
-		r.PUT("/dashboards/:id", Update)
-		r.DELETE("/dashboards/:id", Delete)
+		r.POST("/api/dashboards", Create)
+		r.PUT("/api/dashboards/:id", Update)
+		r.DELETE("/api/dashboards/:id", Delete)
 	}
 
 	// listen and server on 0.0.0.0:8080
