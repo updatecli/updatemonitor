@@ -51,6 +51,11 @@ spec:
           #    path: /
           #    port: http
           env:
+            - name: UPDATEMONITOR_DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "updatemonitor.secretName" . }}-database
+                  key: uri
           {{- range .Values.agents.environments }}
             - name: {{ .name }}
               valueFrom:
