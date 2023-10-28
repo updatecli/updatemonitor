@@ -1,5 +1,5 @@
 ---
-WARNING: Updatemonitor is still in a very early stage. We encourage you to provide feedback to help shape the direction of the project.
+IMPORTANT: This repository is now archived in favor of https://github.com/updatecli/udash. Too many changes were needed to continue this experiment
 ---
 
 # README
